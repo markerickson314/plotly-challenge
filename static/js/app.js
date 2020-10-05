@@ -3,6 +3,7 @@
 function DrawBargraph(sampleID) {
     d3.json("samples.json").then((data) => {
 
+        // create variables to hold bar chart data 
         var samples = data.samples;
         var resultArray = samples.filter(s => s.id == sampleID);
         var result = resultArray[0];
@@ -13,6 +14,7 @@ function DrawBargraph(sampleID) {
 
         var yticks = otu_ids.slice(0,10).map(otuID=> `OTU ${otuID}`).reverse();
         
+        // assemble data for bar chart
         var barData = {
             x: sample_values.slice(0,10).reverse(),
             y: yticks,
@@ -21,24 +23,60 @@ function DrawBargraph(sampleID) {
             orientation: "h"
 
         }
-
+        
+        // set layout for bar chart
         var barLayout = {
             title: "Top 10 Bacteria Cultures Found",
             margin: {t:75, l:75}
         }
 
+        // draw bar chart 
         Plotly.newPlot("bar", [barData], barLayout);
     });
 };
 
 function DrawBubblechart(sampleID) {
-    console.log(`Draw Bubblechart ${sampleID}`);
+    d3.json("samples.json").then((data) => {
+
+        // create variables for the bubble chart data
+        var samples = data.samples;
+        var resultArray = samples.filter(s => s.id == sampleID);
+        var result = resultArray[0];
+
+        var otu_ids = result.otu_ids;
+        var otu_labels = result.otu_labels;
+        var sample_values = result.sample_values;
+
+        // assign data to bubble chart
+        var bubbleData = {
+            x: otu_ids,
+            y: sample_values,
+            mode: "markers",
+            marker: {
+                size: sample_values,
+                color: otu_ids
+            },
+            text: otu_labels
+        }
+
+        // set layout for bubble chart
+        var bubbleLayout = {
+            xaxis:{title: "OTU ID"},
+        }
+
+        // draw the bubble chart
+        Plotly.newPlot("bubble", [bubbleData], bubbleLayout);
+    
+
+    });
+
 };
 
 function Demographics(sampleID) {
 
     d3.json("samples.json").then((data) => {
 
+        // create variables to hold the data 
         var metadata = data.metadata;
         var resultArray = metadata.filter(md => md.id == sampleID);
         var result = resultArray[0];
